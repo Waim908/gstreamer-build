@@ -1,6 +1,6 @@
 name: build gstreamer
 
-job:
+jobs:
   aarch64_distro:
     runs-on: archarm_latest
     name: archlinux test
