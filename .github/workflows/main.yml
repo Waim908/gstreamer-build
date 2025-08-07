@@ -1,0 +1,10 @@
+name: build gstreamer
+
+job:
+  aarch64_distro:
+    runs-on: archarm_latest
+    name: archlinux test
+
+    steps:
+      run: |
+        echo 1
