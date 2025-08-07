@@ -1,10 +1,19 @@
 name: build gstreamer
 
+on: push
+
 jobs:
   aarch64_distro:
-    runs-on: archarm_latest
+    runs-on: ubuntu-22.04
     name: archlinux test
-
     steps:
-      run: |
-        echo 1
+      - uses: actions/checkout@v4
+      - uses: uraimo/run-on-arch-action@v3
+      name: test
+      id: runcmd
+      with:
+        arch: aarch64
+        distro: ubuntu24.04
+        run: |
+          uname -a
+          echo ::set-output name=uname::$(uname -a)
