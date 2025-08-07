@@ -20,5 +20,5 @@ jobs:
 
           # Set an output parameter `uname` for use in subsequent steps
           run: |
-            echo "$(cat /etc/os-release)"
+            pacman -Syu
           # git clone -b 1.26.4 https://gitlab.freedesktop.org/gstreamer/gstreamer.git
