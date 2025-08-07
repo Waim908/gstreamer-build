@@ -1,19 +1,29 @@
-name: build gstreamer
-
-on: push
+on: [push, pull_request]
 
 jobs:
-  aarch64_distro:
-    runs-on: ubuntu-22.04
-    name: archlinux test
+  armv7_job:
+    # The host should always be Linux
+    runs-on: ubuntu-24.04
+    name: Build on ubuntu-24.04 armv7
     steps:
       - uses: actions/checkout@v4
       - uses: uraimo/run-on-arch-action@v3
-      name: test
-      id: runcmd
-      with:
-        arch: aarch64
-        distro: ubuntu24.04
+        name: Run commands
+        id: runcmd
+        with:
+          arch: armv7
+          distro: ubuntu24.04
+
+          # Not required, but speeds up builds by storing container images in
+          # a GitHub package registry.
+          githubToken: ${{ github.token }}
+
+          # Set an output parameter `uname` for use in subsequent steps
+          run: |
+            uname -a
+            echo ::set-output name=uname::$(uname -a)
+
+      - name: Get the output
+        # Echo the `uname` output parameter from the `runcmd` step
         run: |
-          uname -a
-          echo ::set-output name=uname::$(uname -a)
+          echo "The uname output was ${{ steps.runcmd.outputs.uname }}"
