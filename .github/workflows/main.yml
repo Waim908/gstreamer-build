@@ -20,10 +20,9 @@ jobs:
 
           # Set an output parameter `uname` for use in subsequent steps
           run: |
-          	    apt update -y
-																	yes | apt upgrade
-																	apt install meson -y
- 																git clon https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer
-																	cd gstreamer
-																	meson setup -Dgst-full-target-type=static_library --default-library=static -Dintrospection=enabled -Dgst-full-libraries=app,video,player  -Dbase=enabled -Dgood=enabled -Dbad=enabled -Dlibav=enabled  -Dtests=disabled -Dexamples=disabled -Dgstreamer:check=disabled -Dgstreamer:benchmarks=disabled -Dgstreamer:libunwind=disabled -Dgstreamer:libdw=disabled -Dgst-plugins-good:cairo=disabled -Dgst-plugins-good:examples=disabled -Dgst-plugins-good:gdk-pixbuf=disabled -Dgst-plugins-good:oss=disabled -Dgst-plugins-good:oss4=disabled -Dgst-plugins-good:v4l2=disabled -Dgst-plugins-good:aalib=disabled -Dgst-plugins-base:examples=disabled -Dgst-plugins-base:pango=disabled -Dgst-plugins-bad:androidmedia=disabled -Dgst-plugins-bad:rtmp=disabled -Dgst-plugins-bad:shm=disabled -Dgst-plugins-bad:zbar=disabled -Dgst-plugins-bad:webp=disabled -Dgst-plugins-bad:hls-crypto=openssl --wrap-mode=nodownload builddir --prefix=/root/gst/
-																	
+            apt update -y
+            apt install meson -y
+            git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git
+            cd gst*
+            pwd
+																
