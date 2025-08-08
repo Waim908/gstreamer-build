@@ -22,5 +22,6 @@ jobs:
             sudo apt install meson -y
             git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git
             cd gst*
-            pwd
-																
+      - name: Out
+        run: uname -a 
+				             												
