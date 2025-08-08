@@ -1,8 +1,6 @@
 on: [push, pull_request]
-
 jobs:
   arm64_job:
-    # The host should always be Linux
     runs-on: ubuntu-24.04
     name: Build on archlinux aarch64
     steps:
@@ -13,13 +11,9 @@ jobs:
         with:
           arch: aarch64
           distro: ubuntu24.04
-
-          # Not required, but speeds up builds by storing container images in
-          # a GitHub package registry.
           githubToken: ${{ github.token }}
-          run: |
-            sudo apt update -y
-            sudo apt install meson -y
-            git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git
-            cd gst* 
-				             												
+        run: |  
+          sudo apt update -y
+          sudo apt install meson -y
+          git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git
+          cd gst*				             												
