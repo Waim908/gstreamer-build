@@ -19,7 +19,7 @@ jobs:
           githubToken: ${{ github.token }}
 
           # Set an output parameter `uname` for use in subsequent steps
-        - name: update and clone  
+          name: update and clone  
           run: |
             apt update -y
             apt install meson -y
