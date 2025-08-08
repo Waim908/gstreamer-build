@@ -13,7 +13,7 @@ jobs:
           distro: ubuntu24.04
           githubToken: ${{ github.token }}
           run: |  
-            sudo apt update -y
-            sudo apt install meson -y
+            apt update -y
+            apt install meson git -y
             git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git
             cd gst*				             												
