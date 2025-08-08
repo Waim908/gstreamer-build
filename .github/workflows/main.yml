@@ -23,5 +23,6 @@ jobs:
             git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git
             cd gst*
       - name: Out
-        run: uname -a 
+        run: | 
+          uname -a 
 				             												
