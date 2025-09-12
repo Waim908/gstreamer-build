@@ -1,0 +1,15 @@
+name: Build and Release gstreamer
+
+on:
+  workflow_dispatch:
+
+# 不清楚支持哪些arm64系统，暂时搁置
+
+jobs:
+  archlinux:
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - name: depends
+        run: |
+          sudo apt update
+          sudo apt install -y ninja meson 
