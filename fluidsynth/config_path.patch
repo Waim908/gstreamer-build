@@ -1,0 +1,12 @@
+diff -urN fluidsynth/src/bindings/fluid_cmd.c fluidsynth_b/src/bindings/fluid_cmd.c
+--- fluidsynth/src/bindings/fluid_cmd.c	2025-09-11 22:21:36.368650502 +0800
++++ fluidsynth_b/src/bindings/fluid_cmd.c	2025-09-11 22:52:11.384523013 +0800
+@@ -704,7 +704,7 @@
+ #elif defined(MACOS9)
+     return NULL;
+ #else
+-    FLUID_SNPRINTF(buf, len, "/etc/fluidsynth.conf");
++    FLUID_SNPRINTF(buf, len, "/data/data/com.termux/files/usr/glibc/etc/fluidsynth.conf");
+     return buf;
+ #endif
+ }
