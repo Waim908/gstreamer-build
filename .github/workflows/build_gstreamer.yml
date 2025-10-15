@@ -1,15 +1,176 @@
 name: Build and Release gstreamer
 
+permissions:
+  contents: write
+  packages: write
+
 on:
   workflow_dispatch:
+    inputs:
+      inputGstVersion:
+        description: "输入gstreamer分支版本："
+        required: true
+        default: "1.27.2"
+      inputLibde265:
+        description: "输入libde265版本："
+        required: true
+        default: "v1.0.16"
+      inputLibvideogfx:
+        description: "输入libvideogfx的版本："
+        required: true
+        default: "v1.0.9"
 
-# 不清楚支持哪些arm64系统，暂时搁置
+env:
+  gstVer: ${{ github.event.inputs.inputGstVersion  }}
+  libde265Ver: ${{ github.event.inputs.inputLibde265 }}
+  libvideogfxVer: ${{ github.event.inputs.inputLibvideogfx }}
 
 jobs:
-  archlinux:
-    runs-on: ubuntu-22.04-arm
+  ubuntu:
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: depends
         run: |
+          # echo -e 'deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble main restricted universe multiverse\ndeb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble main restricted universe multiverse\ndeb https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-updates main restricted universe multiverse\ndeb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-updates main restricted universe multiverse\ndeb https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-backports main restricted universe multiverse\ndeb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-backports main restricted universe multiverse\ndeb http://ports.ubuntu.com/ubuntu-ports/ noble-security main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports/ noble-security main restricted universe multiverse' | sudo tee /etc/apt/sources.list
+          sudo sh -c 'echo -e "deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" > /etc/apt/sources.list && apt update'
           sudo apt update
-          sudo apt install -y ninja meson 
+          sudo apt upgrade -y
+          sudo apt build-dep gstreamer -y
+          sudo apt build-dep libde265 -y
+          sudo apt install python3 ninja-build cmake aria2 libde265-dev -y
+          pip install meson --break-system-package -y
+          sudo mkdir /data
+          sudo chmod 777 /data
+          mkdir -p /data/data/com.termux/files/usr/glibc/
+
+      - name: Download Source Code
+        run: |
+          useCore=$(nproc)
+          dl_libde265=$(curl -s https://api.github.com/repos/strukturag/libde265/releases/tags/${libde265Ver} | grep -o '"browser_download_url":[^,]*' | grep -o 'https://[^"]*')
+          if [[ -z $dl_url ]]; then
+            echo "下载地址获取失败！"
+            exit 1
+          fi
+          mkdir /tmp/libde265/
+          if ! aria2c -x${useCore} -s${usrCore} -d  /tmp/libde265 "$dl_libde265"; then
+            echo "下载失败！"
+            exit 1
+          fi
+          dl_libvideogfx=$(curl -s https://api.github.com/repos/farindk/libvideogfx/releases/tags/${libvideogfxVer} | grep -o '"browser_download_url":[^,]*' | grep -o 'https://[^"]*')
+          if [[ -z $dl_libvideogfx ]]; then
+            echo "下载地址获取失败！"
+            exit 1
+          fi
+          mkdir /tmp/libvideogfx
+          if ! aria2c -x${useCore} -s${usrCore} -d /tmp/libde265 "$dl_libvideogfx"; then
+            echo "下载失败！"
+            exit 1
+          fi
+          cd /tmp
+          if ! git clone -b ${gstVer} https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer-src; then
+            echo "源码克隆失败！"
+            exit 1
+          fi
+      
+      - name: Compile libvideogfx
+        run: |
+          cd /tmp/libvideogfx
+          tar xf * -C .
+          cd */
+          ./autogen.sh
+          if ! make -j$(nproc); then
+            echo "编译失败"
+            exit 1
+          fi
+          make install
+      
+      - name: Compile libde265
+        run: |
+          cd /tmp/libde265
+          tar xf * -C .
+          cd */
+          export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+          mkdir build
+          cd build
+          if ! cmake .. -DENABLE_ENCODER=on -DENABLE_SDL=off -DCMAKE_INSTALL_PREFIX=/data/data/com.termux/files/usr/glibc/; then
+            echo "构建失败"
+            exit 1
+          fi
+          if ! make -j$(nproc); then
+            echo "编译失败"
+            exit 1
+          fi
+          make install
+      
+      - name: Compile Gstreamer
+        run: |
+          cd /tmp/gstreamer-src
+          meson setup builddir \
+            --buildtype=release \
+            --strip \
+            -Dgst-full-target-type=shared_library \
+            -Dintrospection=disabled \
+            -Dgst-full-libraries=app,video,player \
+            -Dbase=enabled \
+            -Dgood=enabled \
+            -Dbad=enabled \
+            -Dugly=enabled \
+            -Dlibav=enabled \
+            -Dtests=disabled \
+            -Dexamples=disabled \
+            -Ddoc=disabled \
+            -Dges=disabled \
+            -Dpython=disabled \
+            -Ddevtools=disabled \
+            -Dwebrtc=disabled \
+            -Dgstreamer:check=disabled \
+            -Dgstreamer:benchmarks=disabled \
+            -Dgstreamer:libunwind=disabled \
+            -Dgstreamer:libdw=disabled \
+            -Dgstreamer:bash-completion=disabled \
+            -Dgst-plugins-good:cairo=disabled \
+            -Dgst-plugins-good:gdk-pixbuf=disabled \
+            -Dgst-plugins-good:oss=disabled \
+            -Dgst-plugins-good:oss4=disabled \
+            -Dgst-plugins-good:v4l2=disabled \
+            -Dgst-plugins-good:aalib=disabled \
+            -Dgst-plugins-good:jack=disabled \
+            -Dgst-plugins-good:pulse=enabled \
+            -Dgst-plugins-good:adaptivedemux2=disabled \
+            -Dgst-plugins-good:v4l2=disabled \
+            -Dgst-plugins-good:libcaca=enabled \
+            -Dgst-plugins-base:examples=disabled \
+            -Dgst-plugins-base:alsa=enabled \
+            -Dgst-plugins-base:pango=disabled \
+            -Dgst-plugins-base:x11=enabled \
+            -Dgst-plugins-bad:gpl=enabled \
+            -Dgst-plugins-bad:androidmedia=disabled \
+            -Dgst-plugins-bad:rtmp=disabled \
+            -Dgst-plugins-bad:shm=disabled \
+            -Dgst-plugins-bad:zbar=disabled \
+            -Dgst-plugins-bad:webp=disabled \
+            -Dgst-plugins-bad:hls-crypto=openssl \
+            -Dgst-plugins-bad:kms=disabled \
+            -Dgst-plugins-bad:vulkan=enabled \
+            -Dgst-plugins-bad:vulkan-windowing=x11 \
+            -Dgst-plugins-bad:vulkan-video=enabled \
+            -Dgst-plugins-bad:dash=disabled \
+            -Dgst-plugins-bad:analyticsoverlay=disabled \
+            -Dgst-plugins-bad:nvcodec=disabled \
+            -Dgst-plugins-bad:uvch264=disabled \
+            -Dgst-plugins-bad:v4l2codecs=disabled \
+            -Dgst-plugins-bad:udev=disabled \
+            -Dgst-plugins-bad:libde265=enabled \
+            -Dgst-plugins-bad:smoothstreaming=disabled \
+            -Dgst-plugins-bad:fluidsynth=disabled \
+            -Dpackage-origin="[gstremaer-termux] (https://github.com/Waim908/gstreamer-termux)  ᗜˬᗜ" \
+            --prefix=/data/data/com.termux/files/usr/glibc
+            
+          
+
+
+
+
+
+
+
