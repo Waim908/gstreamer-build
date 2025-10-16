@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: depends
         run: |
-          sudo sh -c 'echo -e "deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" > /etc/apt/sources.list'
+          echo -e "deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" | sudo tee /etc/apt/sources.list
           sudo apt update
           # sudo apt upgrade -y
           # sudo apt build-dep gstreamer -y
