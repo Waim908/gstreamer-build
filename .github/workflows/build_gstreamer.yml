@@ -31,8 +31,7 @@ jobs:
     steps:
       - name: depends
         run: |
-          # echo -e 'deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble main restricted universe multiverse\ndeb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble main restricted universe multiverse\ndeb https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-updates main restricted universe multiverse\ndeb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-updates main restricted universe multiverse\ndeb https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-backports main restricted universe multiverse\ndeb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-backports main restricted universe multiverse\ndeb http://ports.ubuntu.com/ubuntu-ports/ noble-security main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports/ noble-security main restricted universe multiverse' | sudo tee /etc/apt/sources.list
-          sudo sh -c 'echo -e "deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" > /etc/apt/sources.list && apt update'
+          sudo sh -c 'echo -e "deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" > /etc/apt/sources.list'
           sudo apt update
           # sudo apt upgrade -y
           # sudo apt build-dep gstreamer -y
