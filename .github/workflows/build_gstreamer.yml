@@ -29,48 +29,39 @@ jobs:
   ubuntu:
     runs-on: ubuntu-24.04-arm
     steps:
-      - name: depends
+      - name: Install Dependencies
         run: |
           echo -e "deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" | sudo tee /etc/apt/sources.list
           sudo apt update
-          # sudo apt upgrade -y
-          # sudo apt build-dep gstreamer -y
-          sudo apt install libde265 fontconfig-dev flex bison libx11-dev pkg-config libx11-xcb-dev libvulkan-dev libxkbcommon-dev libxkbcommon-x11-dev libde265-dev glslang-dev glslang-tools  -y 
-          sudo apt install python3 ninja-build cmake aria2 libde265-dev -y
+          sudo apt install -y build-essential aria2 libde265 pkg-config
+          sudo apt build-dep gstreamer -y
+          sudo apt build-dep libde265 -y
           pip install meson --break-system-package -y
-          sudo mkdir /data
+          sudo mkdir -p /data
           sudo chmod 777 /data
           mkdir -p /data/data/com.termux/files/usr/glibc/
 
       - name: Download Source Code
         run: |
           useCore=$(nproc)
-          dl_libde265=$(curl -s https://api.github.com/repos/strukturag/libde265/releases/tags/${libde265Ver} | grep -o '"browser_download_url":[^,]*' | grep -o 'https://[^"]*')
-          if [[ -z $dl_url ]]; then
-            echo "下载地址获取失败！"
-            exit 1
-          fi
-          mkdir /tmp/libde265/
-          if ! aria2c -x${useCore} -s${usrCore} -d  /tmp/libde265 "$dl_libde265"; then
-            echo "下载失败！"
-            exit 1
-          fi
-          dl_libvideogfx=$(curl -s https://api.github.com/repos/farindk/libvideogfx/releases/tags/${libvideogfxVer} | grep -o '"browser_download_url":[^,]*' | grep -o 'https://[^"]*')
-          if [[ -z $dl_libvideogfx ]]; then
-            echo "下载地址获取失败！"
-            exit 1
-          fi
-          mkdir /tmp/libvideogfx
-          if ! aria2c -x${useCore} -s${usrCore} -d /tmp/libde265 "$dl_libvideogfx"; then
-            echo "下载失败！"
-            exit 1
-          fi
           cd /tmp
-          if ! git clone -b ${gstVer} https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer-src; then
-            echo "源码克隆失败！"
-            exit 1
-          fi
-      
+          
+          # 下载 libde265
+          echo "Downloading libde265 ${libde265Ver}"
+          wget -O libde265.tar.gz "https://github.com/strukturag/libde265/archive/refs/tags/${libde265Ver}.tar.gz"
+          tar xzf libde265.tar.gz
+          mv libde265-* libde265-src
+          
+          # 下载 libvideogfx  
+          echo "Downloading libvideogfx ${libvideogfxVer}"
+          wget -O libvideogfx.tar.gz "https://github.com/farindk/libvideogfx/archive/refs/tags/${libvideogfxVer}.tar.gz"
+          tar xzf libvideogfx.tar.gz
+          mv libvideogfx-* libvideogfx-src
+          
+          # 克隆 gstreamer
+          echo "Cloning gstreamer ${gstVer}"
+          git clone -b ${gstVer} --depth 1 https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer-src
+
       - name: Compile libvideogfx
         run: |
           cd /tmp/libvideogfx
@@ -100,11 +91,13 @@ jobs:
             exit 1
           fi
           make install
-      
+
       - name: Compile Gstreamer
         run: |
           cd /tmp/gstreamer-src
-          if ! meson setup builddir \
+          
+          meson setup builddir \
+            --libdir=lib
             --buildtype=release \
             --strip \
             -Dgst-full-target-type=shared_library \
@@ -164,40 +157,28 @@ jobs:
             -Dgst-plugins-bad:smoothstreaming=disabled \
             -Dgst-plugins-bad:fluidsynth=disabled \
             -Dgst-plugins-bad:inter=disabled \
-            -Dpackage-origin="[gstremaer-termux] (https://github.com/Waim908/gstreamer-termux)  ᗜˬᗜ" \
-            --prefix=/data/data/com.termux/files/usr/glibc ; then
-              echo "Gstreamer构建配置失败！"
-              exit 1
-            fi
-            if ! meson compile -C builddir; then
-              echo "编译失败！"
-              exit 1
-            fi
-            meson install -C builddir
-      - name: package glibc
+            -Dpackage-origin="[gstreamer-termux] (https://github.com/Waim908/gstreamer-termux) ᗜˬᗜ" \
+            --prefix=/data/data/com.termux/files/usr/glibc
+          meson compile -C builddir
+          meson install -C builddir
+
+      - name: Package glibc
         run: |
           cd /data/data/com.termux/files/usr/
-          tar -I 'xz -T$(nproc)' -cf /tmp/gstreamer-${gstVer}.tar.xz
+          tar -I 'xz -T$(nproc)' -cf /tmp/gstreamer-${gstVer}.tar.xz glibc/
 
-      - name: Release
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           name: gstreamer-${{ github.event.inputs.inputGstVersion }}
           draft: false
           prerelease: false
-          tag_name: ${{ github.event.inputs.inputGstVersion  }}
-          body: gstreamer =>${{ github.event.inputs.inputGstVersion }} , libde265=>${{ github.event.inputs.inputLibde265 }} , libvideogfx=>${{ github.event.inputs.inputLibvideogfx }}
-          files: |
-            /tmp/gstreamer-${{ github.event.inputs.inputGstVersion  }}
+          tag_name: ${{ github.event.inputs.inputGstVersion }}
+          body: |
+            gstreamer => ${{ github.event.inputs.inputGstVersion }}
+            libde265 => ${{ github.event.inputs.inputLibde265 }}
+            libvideogfx => ${{ github.event.inputs.inputLibvideogfx }}
+            
+          files: /tmp/gstreamer-${{ github.event.inputs.inputGstVersion }}.tar.xz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-          
-            
-
-
-
-
-
-
-
