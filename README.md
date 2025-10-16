@@ -53,7 +53,6 @@ meson setup builddir \
   -Dges=disabled \
   -Dpython=disabled \
   -Ddevtools=disabled \
-  -Dwebrtc=disabled \
   -Dgstreamer:check=disabled \
   -Dgstreamer:benchmarks=disabled \
   -Dgstreamer:libunwind=disabled \
@@ -69,11 +68,13 @@ meson setup builddir \
   -Dgst-plugins-good:pulse=enabled \
   -Dgst-plugins-good:adaptivedemux2=disabled \
   -Dgst-plugins-good:v4l2=disabled \
-  -Dgst-plugins-good:libcaca=enabled \
+  -Dgst-plugins-good:libcaca=disabled \
+  -Dgst-plugins-good:mpg123=enabled \
   -Dgst-plugins-base:examples=disabled \
   -Dgst-plugins-base:alsa=enabled \
   -Dgst-plugins-base:pango=disabled \
   -Dgst-plugins-base:x11=enabled \
+  -Dgst-plugins-base:gl_winsys=x11 \
   -Dgst-plugins-bad:gpl=enabled \
   -Dgst-plugins-bad:androidmedia=disabled \
   -Dgst-plugins-bad:rtmp=disabled \
@@ -94,6 +95,7 @@ meson setup builddir \
   -Dgst-plugins-bad:libde265=enabled \
   -Dgst-plugins-bad:smoothstreaming=disabled \
   -Dgst-plugins-bad:fluidsynth=disabled \
+  -Dgst-plugins-bad:inter=disabled \
   -Dpackage-origin="[gstremaer-termux] (https://github.com/Waim908/gstreamer-termux)  ᗜˬᗜ" \
   --prefix=/root/gst
 ```

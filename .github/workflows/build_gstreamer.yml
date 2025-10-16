@@ -21,7 +21,7 @@ on:
         default: "v1.0.9"
 
 env:
-  gstVer: ${{ github.event.inputs.inputGstVersion  }}
+  gstVer: ${{ github.event.inputs.inputGstVersion }}
   libde265Ver: ${{ github.event.inputs.inputLibde265 }}
   libvideogfxVer: ${{ github.event.inputs.inputLibvideogfx }}
 
@@ -34,9 +34,9 @@ jobs:
           # echo -e 'deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble main restricted universe multiverse\ndeb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble main restricted universe multiverse\ndeb https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-updates main restricted universe multiverse\ndeb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-updates main restricted universe multiverse\ndeb https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-backports main restricted universe multiverse\ndeb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ noble-backports main restricted universe multiverse\ndeb http://ports.ubuntu.com/ubuntu-ports/ noble-security main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports/ noble-security main restricted universe multiverse' | sudo tee /etc/apt/sources.list
           sudo sh -c 'echo -e "deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" > /etc/apt/sources.list && apt update'
           sudo apt update
-          sudo apt upgrade -y
-          sudo apt build-dep gstreamer -y
-          sudo apt build-dep libde265 -y
+          # sudo apt upgrade -y
+          # sudo apt build-dep gstreamer -y
+          sudo apt install libde265 fontconfig-dev flex bison libx11-dev pkg-config libx11-xcb-dev libvulkan-dev libxkbcommon-dev libxkbcommon-x11-dev libde265-dev glslang-dev glslang-tools  -y 
           sudo apt install python3 ninja-build cmake aria2 libde265-dev -y
           pip install meson --break-system-package -y
           sudo mkdir /data
@@ -105,7 +105,7 @@ jobs:
       - name: Compile Gstreamer
         run: |
           cd /tmp/gstreamer-src
-          meson setup builddir \
+          if ! meson setup builddir \
             --buildtype=release \
             --strip \
             -Dgst-full-target-type=shared_library \
@@ -122,7 +122,6 @@ jobs:
             -Dges=disabled \
             -Dpython=disabled \
             -Ddevtools=disabled \
-            -Dwebrtc=disabled \
             -Dgstreamer:check=disabled \
             -Dgstreamer:benchmarks=disabled \
             -Dgstreamer:libunwind=disabled \
@@ -137,12 +136,14 @@ jobs:
             -Dgst-plugins-good:jack=disabled \
             -Dgst-plugins-good:pulse=enabled \
             -Dgst-plugins-good:adaptivedemux2=disabled \
-            -Dgst-plugins-good:v4l2=disabled \
-            -Dgst-plugins-good:libcaca=enabled \
+            -Dgst-plugins-good:libcaca=disabled \
+            -Dgst-plugins-good:mpg123=enabled \
             -Dgst-plugins-base:examples=disabled \
             -Dgst-plugins-base:alsa=enabled \
             -Dgst-plugins-base:pango=disabled \
             -Dgst-plugins-base:x11=enabled \
+            -Dgst-plugins-base:gl_winsys=x11 \
+            -Dgst-plugins-base:gl=enabled \
             -Dgst-plugins-bad:gpl=enabled \
             -Dgst-plugins-bad:androidmedia=disabled \
             -Dgst-plugins-bad:rtmp=disabled \
@@ -163,10 +164,37 @@ jobs:
             -Dgst-plugins-bad:libde265=enabled \
             -Dgst-plugins-bad:smoothstreaming=disabled \
             -Dgst-plugins-bad:fluidsynth=disabled \
+            -Dgst-plugins-bad:inter=disabled \
             -Dpackage-origin="[gstremaer-termux] (https://github.com/Waim908/gstreamer-termux)  ᗜˬᗜ" \
-            --prefix=/data/data/com.termux/files/usr/glibc
-            
+            --prefix=/data/data/com.termux/files/usr/glibc ; then
+              echo "Gstreamer构建配置失败！"
+              exit 1
+            fi
+            if ! meson compile -C builddir; then
+              echo "编译失败！"
+              exit 1
+            fi
+            meson install -C builddir
+      - name: package glibc
+        run: |
+          cd /data/data/com.termux/files/usr/
+          tar -I 'xz -T$(nproc)' -cf /tmp/gstreamer-${gstVer}.tar.xz
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: gstreamer-${{ github.event.inputs.inputGstVersion }}
+          draft: false
+          prerelease: false
+          tag_name: ${{ github.event.inputs.inputGstVersion  }}
+          body: gstreamer =>${{ github.event.inputs.inputGstVersion }} , libde265=>${{ github.event.inputs.inputLibde265 }} , libvideogfx=>${{ github.event.inputs.inputLibvideogfx }}
+          files: |
+            /tmp/gstreamer-${{ github.event.inputs.inputGstVersion  }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
+          
+            
 
 
 
