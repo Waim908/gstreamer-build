@@ -51,6 +51,8 @@ jobs:
           wget -O libde265.tar.gz "https://github.com/strukturag/libde265/archive/refs/tags/${libde265Ver}.tar.gz"
           tar --strip-components=1 -xzf  libde265.tar.gz -C .
           
+          cd /tmp
+
           # 下载 libvideogfx
           mkdir libvideogfx-src/
           cd libvideogfx-src/
@@ -173,8 +175,8 @@ jobs:
           tag_name: ${{ github.event.inputs.inputGstVersion }}
           body: |
             gstreamer => ${{ github.event.inputs.inputGstVersion }}
-            libde265 => ${{ github.event.inputs.inputLibde265 }}
-            libvideogfx => ${{ github.event.inputs.inputLibvideogfx }}
+            (H265编解码)libde265 => ${{ github.event.inputs.inputLibde265 }}
+            (不构建在包内)libvideogfx => ${{ github.event.inputs.inputLibvideogfx }}
             
           files: /tmp/gstreamer-${{ github.event.inputs.inputGstVersion }}.tar.xz
         env:
