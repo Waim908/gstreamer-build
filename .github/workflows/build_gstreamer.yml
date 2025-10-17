@@ -34,8 +34,7 @@ jobs:
           echo -e "deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" | sudo tee /etc/apt/sources.list
           sudo apt update
           sudo apt install -y build-essential libde265-0 libde265-dev pkg-config
-          sudo apt build-dep gstreamer -y
-          sudo apt build-dep libde265 -y
+          sudo apt build-dep libde265 gstreamer1.0 -y
           pip install meson  ninja --break-system-package -y
           sudo mkdir -p /data
           sudo chmod 777 /data
