@@ -49,14 +49,14 @@ jobs:
           cd libde265-src/
           echo "Downloading libde265 ${libde265Ver}"
           wget -O libde265.tar.gz "https://github.com/strukturag/libde265/archive/refs/tags/${libde265Ver}.tar.gz"
-          tar xzf --strip-components=1 libde265.tar.gz -C .
+          tar --strip-components=1 -xzf  libde265.tar.gz -C .
           
-          # 下载 libvideogfx  
+          # 下载 libvideogfx
           mkdir libvideogfx-src/
           cd libvideogfx-src/
           echo "Downloading libvideogfx ${libvideogfxVer}"
           wget -O libvideogfx.tar.gz "https://github.com/farindk/libvideogfx/archive/refs/tags/${libvideogfxVer}.tar.gz"
-          tar xzf --strip-components=1 libvideogfx.tar.gz -C .
+          tar --strip-components=1 -xzf  libvideogfx.tar.gz -C .
           
           # 克隆 gstreamer
           cd /tmp
