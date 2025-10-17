@@ -49,14 +49,14 @@ jobs:
           cd libde265-src/
           echo "Downloading libde265 ${libde265Ver}"
           wget -O libde265.tar.gz "https://github.com/strukturag/libde265/archive/refs/tags/${libde265Ver}.tar.gz"
-          tar xzf libde265.tar.gz
+          tar xzf --strip-components=1 libde265.tar.gz -C .
           
           # 下载 libvideogfx  
           mkdir libvideogfx-src/
           cd libvideogfx-src/
           echo "Downloading libvideogfx ${libvideogfxVer}"
           wget -O libvideogfx.tar.gz "https://github.com/farindk/libvideogfx/archive/refs/tags/${libvideogfxVer}.tar.gz"
-          tar xzf libvideogfx.tar.gz
+          tar xzf --strip-components=1 libvideogfx.tar.gz -C .
           
           # 克隆 gstreamer
           cd /tmp
@@ -65,7 +65,7 @@ jobs:
 
       - name: Compile libvideogfx
         run: |
-          cd /tmp/libvideogfx-src/*/
+          cd /tmp/libvideogfx-src/
           ./autogen.sh
           if ! make -j$(nproc); then
             echo "编译失败"
@@ -75,7 +75,7 @@ jobs:
       
       - name: Compile libde265
         run: |
-          cd /tmp/libde265-src/*/
+          cd /tmp/libde265-src/
           export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
           mkdir build
           cd build
