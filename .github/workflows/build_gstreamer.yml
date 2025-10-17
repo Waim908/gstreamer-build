@@ -33,10 +33,10 @@ jobs:
         run: |
           echo -e "deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" | sudo tee /etc/apt/sources.list
           sudo apt update
-          sudo apt install -y build-essential aria2 libde265 pkg-config
+          sudo apt install -y build-essential libde265 pkg-config
           sudo apt build-dep gstreamer -y
           sudo apt build-dep libde265 -y
-          pip install meson --break-system-package -y
+          pip install meson  ninja --break-system-package -y
           sudo mkdir -p /data
           sudo chmod 777 /data
           mkdir -p /data/data/com.termux/files/usr/glibc/
