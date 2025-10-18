@@ -35,7 +35,7 @@ jobs:
         run: |
           echo -e "deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" | sudo tee /etc/apt/sources.list
           sudo apt update
-          sudo apt install -y build-essential libde265-0 libde265-dev pkg-config cmake automake autoconf libtool libltdl-dev autopoint flex bison libx11-dev pkg-config libx11-xcb-dev libvulkan-dev libxkbcommon-dev libxkbcommon-x11-dev libde265-dev glslang-dev
+          sudo apt install -y build-essential libde265-0 libde265-dev pkg-config cmake automake autoconf libtool libltdl-dev autopoint flex bison libx11-dev pkg-config libx11-xcb-dev libvulkan-dev libxkbcommon-dev libxkbcommon-x11-dev libde265-dev glslang-dev libmpg123-dev
           sudo apt build-dep libde265 gstreamer1.0 -y
           sudo apt autoremove meson ninja-build -y
           pip install meson  ninja --break-system-package
