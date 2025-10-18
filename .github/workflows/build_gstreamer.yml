@@ -78,7 +78,7 @@ jobs:
             echo "编译失败"
             exit 1
           fi
-          make install
+          sudo make install
       
       - name: Compile libde265
         run: |
