@@ -70,6 +70,10 @@ jobs:
           cd /tmp/libvideogfx-src/
           autoupdate
           ./autogen.sh
+          if ! ./configure; then
+            echo "构建失败"
+            exit 1
+          fi
           if ! make -j$(nproc); then
             echo "编译失败"
             exit 1
