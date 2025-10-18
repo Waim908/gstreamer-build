@@ -97,7 +97,8 @@ meson setup builddir \
   -Dgst-plugins-bad:fluidsynth=disabled \
   -Dgst-plugins-bad:inter=disabled \
   -Dgst-plugins-bad:x11=enabled \
-  -Dgst-plugins-wayland=disabled \
+  -Dgst-plugins-bad:wayland=disabled \
+  -Dgst-plugins-bad:openh264=enabled \
   -Dpackage-origin="[gstremaer-termux] (https://github.com/Waim908/gstreamer-termux)  ᗜˬᗜ" \
   --prefix=/root/gst
 ```
