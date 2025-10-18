@@ -33,7 +33,7 @@ jobs:
         run: |
           echo -e "deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\ndeb-src http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse" | sudo tee /etc/apt/sources.list
           sudo apt update
-          sudo apt install -y build-essential libde265-0 libde265-dev pkg-config cmake
+          sudo apt install -y build-essential libde265-0 libde265-dev pkg-config cmake automake autoconf libtool libltdl-dev autopoint
           sudo apt build-dep libde265 gstreamer1.0 -y
           pip install meson  ninja --break-system-package
           sudo mkdir -p /data
@@ -68,6 +68,7 @@ jobs:
       - name: Compile libvideogfx
         run: |
           cd /tmp/libvideogfx-src/
+          autoupdate
           ./autogen.sh
           if ! make -j$(nproc); then
             echo "编译失败"
