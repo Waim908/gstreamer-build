@@ -1,0 +1,67 @@
+name: Build Gstreamer and libde265 use BCC
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      inputGstVersion:
+        description: "输入gstreamer分支版本："
+        required: true
+        default: "1.27.2"
+      inputLibde265:
+        description: "输入libde265版本："
+        required: true
+        default: "v1.0.16"
+
+env:
+  gstVer: ${{ github.event.inputs.inputGstVersion }}
+  libde265Ver: ${{ github.event.inputs.inputLibde265 }}
+
+jobs:
+  BCC:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: BCC
+        run:
+          if ! wget -O https://github.com/Waim908/BCC/releases/download/gst-bcc-latest/gst-bcc.tar.xz; then
+            echo "下载失败"
+            exit 1
+          fi
+          tar xvf gst-bcc.tar.xz -C /tmp
+          cd /tmp
+          git clone https://github.com/Waim908/gstreamer-termux.git
+          cp gstreamer-termux/build-gst.sh /tmp/archlinux/bin
+          sudo chmod +x /tmp/archlinux/bin/build-gst.sh
+          sudo mount --bind /proc archlinux/proc
+          sudo mount --bind /sys archlinux/sys
+          sudo mount --bind /dev archlinux/dev
+          if ! sudo chroot /tmp/archlinux /bin/build-gst.sh; then
+            echo "失败"
+            exit 1
+          fi
+          sudo umount -l archlinux/dev
+          sudo umount -l archlinux/sys
+          sudo umount -l archlinux/proc
+      
+      - name: Package
+        run: |
+          cd archlinux/data/data/com.termux/files/usr
+          tar -cvf /tmp/gstreamer-${gstVer}.tar.xz glibc/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: gstreamer-${{ github.event.inputs.inputGstVersion }}
+          draft: false
+          prerelease: false
+          tag_name: ${{ github.event.inputs.inputGstVersion }}
+          body: |
+            gstreamer => ${{ github.event.inputs.inputGstVersion }}
+            (H265编解码)libde265 => ${{ github.event.inputs.inputLibde265 }}
+            
+          files: /tmp/gstreamer-${{ github.event.inputs.inputGstVersion }}.tar.xz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
