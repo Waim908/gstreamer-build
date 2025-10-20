@@ -24,8 +24,11 @@ jobs:
     runs-on: ubuntu-24.04-arm
     steps:
       - name: BCC
-        run:
-          wget -O https://github.com/Waim908/BCC/releases/download/gst-bcc-latest/gst-bcc.tar.xz
+        run: |
+          if ! wget -O https://github.com/Waim908/BCC/releases/download/gst-bcc-latest/gst-bcc.tar.xz; then
+            echo "BCC下载失败"
+            exit 1
+          fi
           tar xvf gst-bcc.tar.xz -C /tmp
           cd /tmp
           git clone https://github.com/Waim908/gstreamer-termux.git
