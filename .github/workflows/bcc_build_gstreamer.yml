@@ -26,10 +26,10 @@ jobs:
       - name: BCC
         run: |
           curl -L -O "https://github.com/Waim908/BCC/releases/download/gst-bcc-latest/gst-bcc.tar.xz"
-          tar xvf gst-bcc.tar.xz -C /tmp
+          sudo tar xvf gst-bcc.tar.xz -C /tmp
           cd /tmp
           git clone https://github.com/Waim908/gstreamer-termux.git
-          cp gstreamer-termux/build-gst.sh /tmp/archlinux/bin
+          sudo cp gstreamer-termux/build-gst.sh /tmp/archlinux/bin
           sudo chmod +x /tmp/archlinux/bin/build-gst.sh
           sudo mount --bind /proc archlinux/proc
           sudo mount --bind /sys archlinux/sys
