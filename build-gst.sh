@@ -4,11 +4,7 @@ echo "libde2654 ${libde265Ver}"
 echo "gstreamer ${gstVer}"
 
 # 下载 libde265
-mkdir libde265-src/
-cd libde265-src/
-echo "Downloading libde265 ${libde265Ver}"
-wget -O libde265.tar.gz "https://github.com/strukturag/libde265/archive/refs/tags/${libde265Ver}.tar.gz"
-tar --strip-components=1 -xzf libde265.tar.gz -C .
+
 
 # CMake编译下不再需要
 # mkdir libvideogfx-src/
@@ -18,9 +14,6 @@ tar --strip-components=1 -xzf libde265.tar.gz -C .
 # tar --strip-components=1 -xzf libvideogfx.tar.gz -C .
 
 # 克隆 gstreamer
-cd /tmp
-echo "Cloning gstreamer ${gstVer}"
-git clone -b ${gstVer} https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer-src
 
 mkdir -p /data/data/com.termux/files/usr/glibc
 

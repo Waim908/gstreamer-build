@@ -25,12 +25,24 @@ jobs:
     steps:
       - name: BCC
         run: |
+          echo "libde2654 ${libde265Ver}"
+          echo "gstreamer ${gstVer}"
           curl -L -O "https://github.com/Waim908/BCC/releases/download/gst-bcc-latest/gst-bcc.tar.xz"
           sudo tar xvf gst-bcc.tar.xz -C /tmp
           cd /tmp
           git clone https://github.com/Waim908/gstreamer-termux.git
           sudo cp gstreamer-termux/build-gst.sh /tmp/archlinux/bin
           sudo chmod +x /tmp/archlinux/bin/build-gst.sh
+          sudo chmod 777 archlinux/tmp
+          cd archlinux/tmp
+          mkdir libde265-src/
+          cd libde265-src/
+          echo "Downloading libde265 ${libde265Ver}"
+          wget -O libde265.tar.gz "https://github.com/strukturag/libde265/archive/refs/tags/${libde265Ver}.tar.gz"
+          tar --strip-components=1 -xzf libde265.tar.gz -C .
+          cd archlinux/tmp
+          git clone -b ${gstVer} https://gitlab.freedesktop.org/gstreamer/gstreamer.git gstreamer-src
+          cd /tmp
           sudo mount --bind /proc archlinux/proc
           sudo mount --bind /sys archlinux/sys
           sudo mount --bind /dev archlinux/dev
