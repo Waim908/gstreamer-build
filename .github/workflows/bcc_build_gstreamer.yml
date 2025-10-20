@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: BCC
         run: |
-          wget -O https://github.com/Waim908/BCC/releases/download/gst-bcc-latest/gst-bcc.tar.xz
+          curl -L -O "https://github.com/Waim908/BCC/releases/download/gst-bcc-latest/gst-bcc.tar.xz"
           tar xvf gst-bcc.tar.xz -C /tmp
           cd /tmp
           git clone https://github.com/Waim908/gstreamer-termux.git
