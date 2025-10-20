@@ -34,7 +34,7 @@ jobs:
           sudo cp gstreamer-termux/build-gst.sh /tmp/archlinux/bin
           sudo chmod +x /tmp/archlinux/bin/build-gst.sh
           sudo chmod 777 archlinux/tmp
-          cd archlinux/tmp
+          cd /tmp/archlinux/tmp
           mkdir libde265-src/
           cd libde265-src/
           echo "Downloading libde265 ${libde265Ver}"
