@@ -56,7 +56,7 @@ jobs:
       
       - name: Package
         run: |
-          cd archlinux/data/data/com.termux/files/usr
+          cd /tmp/archlinux/data/data/com.termux/files/usr
           tar -I "xz -T$(nproc)" -cvf /tmp/gstreamer-${gstVer}.tar.xz glibc/
 
       - name: Create Release
