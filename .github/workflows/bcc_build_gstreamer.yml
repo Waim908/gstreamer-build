@@ -13,7 +13,6 @@ on:
 
 env:
   gstVer: ${{ github.event.inputs.inputGstVersion }}
-  libde265Ver: ${{ github.event.inputs.inputLibde265 }}
 
 jobs:
   BCC:
