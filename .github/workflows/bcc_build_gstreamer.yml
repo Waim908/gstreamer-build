@@ -1,4 +1,4 @@
-name: Build Gstreamer and libde265 use BCC
+name: Build Gstreamer use BCC
 
 permissions:
   contents: write
