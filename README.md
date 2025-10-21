@@ -11,7 +11,7 @@
 
 ```cmake .. -DENABLE_ENCODER=on -DENABLE_SDL=off -DCMAKE_INSTALL_PREFIX=/root/buildde265/```
 
-#### depend(libde265)
+~~#### depend(libde265)~~ <= 实际使用压根不会调用这个进行解码而是libav，包括h264解码不会使用openh264是一样的道理
 
   libgfxvideo(decoder support) [GPL2.0] <= 手动构建，*构建用的系统需要*
 
@@ -21,8 +21,8 @@
 
 无法使用midi音频支持，此方案暂时禁用
 
-~~
-#### depend(fluidsynth) <= 不支持MIDI，此方法暂时无效
+
+~~#### depend(fluidsynth)~~ <= 不支持MIDI，此方法暂时无效
 
   应用此仓库的配置文件修复补丁
   ```fluidsynth/config_path.patch```
@@ -98,7 +98,7 @@ meson setup builddir \
   -Dgst-plugins-bad:inter=disabled \
   -Dgst-plugins-bad:x11=enabled \
   -Dgst-plugins-bad:wayland=disabled \
-  -Dgst-plugins-bad:openh264=enabled \
+  -Dgst-plugins-bad:openh264=disabled \
   -Dpackage-origin="[gstremaer-termux] (https://github.com/Waim908/gstreamer-termux)  ᗜˬᗜ" \
   --prefix=/root/gst
 ```
