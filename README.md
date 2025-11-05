@@ -75,7 +75,6 @@ meson setup builddir \
   -Dgst-plugins-base:alsa=enabled \
   -Dgst-plugins-base:pango=disabled \
   -Dgst-plugins-base:x11=enabled \
-  -Dgst-plugins-base:gl_winsys=x11 \
   -Dgst-plugins-bad:gpl=enabled \
   -Dgst-plugins-bad:androidmedia=disabled \
   -Dgst-plugins-bad:rtmp=disabled \
@@ -98,6 +97,7 @@ meson setup builddir \
   -Dgst-plugins-bad:fluidsynth=disabled \
   -Dgst-plugins-bad:inter=disabled \
   -Dgst-plugins-bad:x11=enabled \
+  -Dgst-plugins-bad:gl=diabled \
   -Dgst-plugins-bad:wayland=disabled \
   -Dgst-plugins-bad:openh264=disabled \
   -Dgst-plugins-bad:hip=disabled \
