@@ -35,7 +35,7 @@
 
 ### 一个干净的系统，clone gstreamer source code
 
-# LITE
+# LITE winlator rootfs （winlator 11）
 ```bash
 meson setup builddir \
   --buildtype=release \
@@ -75,13 +75,14 @@ meson setup builddir \
   -Dgst-plugins-base:alsa=enabled \
   -Dgst-plugins-base:pango=disabled \
   -Dgst-plugins-base:x11=enabled \
-  -Dgst-plugins-bad:gpl=enabled \
+  -Dgst-plugins-base:gl=enabled \
+  -Dgst-plugins-base:gl_api=opengl \
+  -Dgst-plugins-base:gl_platform=glx \
   -Dgst-plugins-bad:androidmedia=disabled \
   -Dgst-plugins-bad:rtmp=disabled \
   -Dgst-plugins-bad:shm=disabled \
   -Dgst-plugins-bad:zbar=disabled \
   -Dgst-plugins-bad:webp=disabled \
-  -Dgst-plugins-bad:hls-crypto=openssl \
   -Dgst-plugins-bad:kms=disabled \
   -Dgst-plugins-bad:vulkan=enabled \
   -Dgst-plugins-bad:vulkan-windowing=x11 \
@@ -97,16 +98,16 @@ meson setup builddir \
   -Dgst-plugins-bad:fluidsynth=disabled \
   -Dgst-plugins-bad:inter=disabled \
   -Dgst-plugins-bad:x11=enabled \
-  -Dgst-plugins-bad:gl=diabled \
+  -Dgst-plugins-bad:gl=disabled \
   -Dgst-plugins-bad:wayland=disabled \
   -Dgst-plugins-bad:openh264=disabled \
   -Dgst-plugins-bad:hip=disabled \
-  -Dgst-plugins-bad:aja=diabled \
-  -Dgst-plugins-bad:aes=diabled \
-  -Dgst-plugins-bad:dtls=diabled \
-  -Dgst-plugins-bad:hls=diabled \
-
-  -Dpackage-origin="[gstremaer-build] (https://github.com/Waim908/gstreamer-build)  ᗜˬᗜ" \
+  -Dgst-plugins-bad:aja=disabled \
+  -Dgst-plugins-bad:aes=disabled \
+  -Dgst-plugins-bad:dtls=disabled \
+  -Dgst-plugins-bad:hls=disabled \
+  -Dgst-plugins-bad:curl=disabled \
+  -Dpackage-origin="[gstremaer-build] (https://github.com/Waim908/gstreamer-build)" \
   --prefix=/root/gst
 ```
 
@@ -150,8 +151,6 @@ meson setup builddir \
   -Dgst-plugins-base:alsa=enabled \
   -Dgst-plugins-base:pango=disabled \
   -Dgst-plugins-base:x11=enabled \
-  -Dgst-plugins-base:gl=disabled \
-  -Dgst-plugins-bad:gpl=enabled \
   -Dgst-plugins-bad:androidmedia=disabled \
   -Dgst-plugins-bad:rtmp=disabled \
   -Dgst-plugins-bad:shm=disabled \
@@ -173,7 +172,7 @@ meson setup builddir \
   -Dgst-plugins-bad:x11=enabled \
   -Dgst-plugins-bad:wayland=disabled \
   -Dgst-plugins-bad:openh264=disabled \
-  -Dpackage-origin="[gstremaer-build] (https://github.com/Waim908/gstreamer-build)  ᗜˬᗜ" \
+  -Dpackage-origin="[Waim908/gstremaer-build] (https://github.com/Waim908/gstreamer-build)  ᗜˬᗜ" \
   --prefix=/root/gst
 ```
 
